@@ -1,10 +1,23 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Play, MousePointer, X } from "lucide-react";
+
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  quality: string;
+  type: string;
+  embedUrl?: string;
+  thumbnail?: string;
+}
 
 export default function MediaSection() {
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
 
-  const featuredVideos = [
+  const featuredVideos: Video[] = [
     {
       id: "1",
       title: "Digital Genesis Process",
@@ -12,6 +25,8 @@ export default function MediaSection() {
       duration: "12:45",
       quality: "4K Resolution",
       type: "Time-lapse",
+      embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
     },
     {
       id: "2",
@@ -20,8 +35,35 @@ export default function MediaSection() {
       duration: "∞",
       quality: "WebGL Enabled",
       type: "Interactive",
+      thumbnail: "https://images.unsplash.com/photo-1518818419601-72c8673f5852?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
+    },
+    {
+      id: "3",
+      title: "Fractal Dreams",
+      description: "Dive deep into infinite mathematical beauty as fractals unfold in mesmerizing patterns.",
+      duration: "8:30",
+      quality: "4K Resolution",
+      type: "Animation",
+      embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
+    },
+    {
+      id: "4",
+      title: "Behind the Void",
+      description: "A glimpse into the creative process behind the Cosmic Artifacts collection.",
+      duration: "15:22",
+      quality: "4K Resolution",
+      type: "Behind-the-scenes",
+      embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      thumbnail: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
     },
   ];
+
+  const filters = ["all", "Time-lapse", "Animation", "Behind-the-scenes", "Interactive"];
+
+  const filteredVideos = activeFilter === "all"
+    ? featuredVideos
+    : featuredVideos.filter(v => v.type === activeFilter);
 
   const animations = [
     {
@@ -59,38 +101,79 @@ export default function MediaSection() {
           </p>
         </motion.div>
 
+        {/* Filter buttons */}
+        <motion.div 
+          className="flex justify-center gap-4 mb-12 flex-wrap"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          {filters.map((filter) => (
+            <motion.button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                activeFilter === filter
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              data-testid={`video-filter-${filter}`}
+            >
+              {filter === "all" ? "All Videos" : filter}
+            </motion.button>
+          ))}
+        </motion.div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {featuredVideos.map((video, index) => (
+          {filteredVideos.map((video, index) => (
             <motion.div
               key={video.id}
               className="group relative"
-              initial={{ opacity: 0, x: index === 0 ? -50 : 50 }}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
+              layout
             >
               <div className="relative overflow-hidden rounded-xl fractal-border bg-card">
                 {/* Video player with fractal particle hover effects */}
-                <div className="aspect-video bg-gradient-to-br from-muted/50 to-background flex items-center justify-center relative group-hover:bg-gradient-to-br group-hover:from-primary/10 group-hover:to-secondary/10 transition-all duration-500">
-                  <div className="absolute inset-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg opacity-70"></div>
+                <div className="aspect-video bg-gradient-to-br from-muted/50 to-background flex items-center justify-center relative group-hover:bg-gradient-to-br group-hover:from-primary/10 group-hover:to-secondary/10 transition-all duration-500 overflow-hidden">
+                  {video.thumbnail && (
+                    <img 
+                      src={video.thumbnail} 
+                      alt={video.title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                   <motion.button
                     className={`relative z-10 w-20 h-20 ${
-                      index === 0 ? "bg-primary/20" : "bg-secondary/20"
-                    } backdrop-blur-sm rounded-full flex items-center justify-center text-accent text-2xl hover:${
-                      index === 0 ? "bg-primary/30" : "bg-secondary/30"
-                    } transition-all duration-300 animate-glow`}
+                      video.type === "Interactive" ? "bg-secondary/40" : "bg-primary/40"
+                    } backdrop-blur-sm rounded-full flex items-center justify-center text-accent hover:bg-primary/50 transition-all duration-300 animate-glow`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => setSelectedVideo(video.id)}
+                    onClick={() => setSelectedVideo(video)}
                     data-testid={`video-play-${video.id}`}
                   >
-                    <i className={index === 0 ? "fas fa-play ml-1" : "fas fa-mouse-pointer"}></i>
+                    {video.type === "Interactive" ? (
+                      <MousePointer className="w-8 h-8" />
+                    ) : (
+                      <Play className="w-8 h-8 ml-1" />
+                    )}
                   </motion.button>
                   <div className="absolute top-4 left-4 text-xs text-muted-foreground font-mono">
-                    // {video.type.toUpperCase()}_01.{index === 0 ? "MP4" : "DEMO"}
+                    // {video.type.toUpperCase()}_0{video.id}.{video.embedUrl ? "MP4" : "DEMO"}
                   </div>
                 </div>
                 <div className="p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+                      {video.type}
+                    </span>
+                  </div>
                   <h3 className="text-2xl font-serif font-bold text-accent mb-2">{video.title}</h3>
                   <p className="text-muted-foreground mb-4">{video.description}</p>
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -151,20 +234,34 @@ export default function MediaSection() {
           >
             <div className="relative max-w-4xl w-full">
               <button
-                className="absolute -top-12 right-0 text-foreground hover:text-accent text-2xl z-10"
+                className="absolute -top-12 right-0 text-foreground hover:text-accent z-10"
                 onClick={() => setSelectedVideo(null)}
                 data-testid="video-modal-close"
               >
-                <i className="fas fa-times"></i>
+                <X className="w-8 h-8" />
               </button>
               <div className="aspect-video bg-card rounded-xl overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <div className="text-center text-foreground">
-                    <i className="fas fa-play text-4xl mb-4 opacity-50"></i>
-                    <p className="text-lg">Video player would be implemented here</p>
-                    <p className="text-sm text-muted-foreground mt-2">Using React Player or similar component</p>
+                {selectedVideo.embedUrl ? (
+                  <iframe
+                    src={selectedVideo.embedUrl}
+                    title={selectedVideo.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <div className="text-center text-foreground">
+                      <MousePointer className="w-12 h-12 mb-4 mx-auto opacity-50" />
+                      <p className="text-lg">{selectedVideo.title}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Interactive experience - Coming soon</p>
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-xl font-serif font-bold text-accent">{selectedVideo.title}</h3>
+                <p className="text-muted-foreground text-sm mt-1">{selectedVideo.description}</p>
               </div>
             </div>
           </motion.div>

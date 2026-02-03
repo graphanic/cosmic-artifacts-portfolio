@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
+import { Atom, Infinity } from "lucide-react";
 
 export default function CovenantSection() {
   const stats = [
-    { value: "1,247", label: "Fractals Created", icon: "fas fa-atom" },
-    { value: "∞", label: "Possibilities", icon: "fas fa-infinity" },
-    { value: "5+", label: "Years Crafting", icon: "fas fa-clock" },
+    { value: "1,247", label: "Fractals Created" },
+    { value: "∞", label: "Possibilities" },
+    { value: "5+", label: "Years Crafting" },
   ];
 
   return (
@@ -62,8 +63,8 @@ export default function CovenantSection() {
                 viewport={{ once: true }}
               >
                 <div className="text-center mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-glow">
-                    <i className="fas fa-atom text-white"></i>
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-full mx-auto mb-4 flex items-center justify-center animate-glow">
+                    <Atom className="w-10 h-10 text-white" />
                   </div>
                   <h4 className="text-xl font-serif font-bold text-accent">QUANTUM ARTISTRY</h4>
                 </div>
@@ -81,13 +82,13 @@ export default function CovenantSection() {
                 viewport={{ once: true }}
               >
                 <div className="text-center mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-glow">
-                    <i className="fas fa-infinity text-white"></i>
+                  <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-full mx-auto mb-4 flex items-center justify-center animate-glow">
+                    <Infinity className="w-10 h-10 text-white" />
                   </div>
                   <h4 className="text-xl font-serif font-bold text-accent">ETERNAL RESONANCE</h4>
                 </div>
                 <p className="text-muted-foreground text-center">
-                  Through blockchain immutability, these artifacts transcend temporal
+                  Through digital preservation, these artifacts transcend temporal
                   boundaries, existing forever in the digital cosmos.
                 </p>
               </motion.div>

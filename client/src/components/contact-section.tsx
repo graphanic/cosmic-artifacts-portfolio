@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Rocket, Mail, Loader2 } from "lucide-react";
+import { SiTwitter, SiDiscord, SiInstagram } from "react-icons/si";
 
 interface ContactForm {
   name: string;
@@ -50,22 +52,28 @@ export default function ContactSection() {
   const contactMethods = [
     {
       title: "Digital Realm",
-      icon: "fas fa-envelope",
+      icon: Mail,
       value: "cosmic@artifacts.void",
       gradient: "from-primary to-secondary",
     },
     {
       title: "Cosmic Stream",
-      icon: "fab fa-twitter",
+      icon: SiTwitter,
       value: "@CosmicArtifacts",
       gradient: "from-secondary to-accent",
     },
     {
       title: "Void Collective",
-      icon: "fab fa-discord",
+      icon: SiDiscord,
       value: "CosmicVoid#0001",
       gradient: "from-accent to-primary",
     },
+  ];
+
+  const socialLinks = [
+    { icon: SiTwitter, label: "Twitter" },
+    { icon: SiInstagram, label: "Instagram" },
+    { icon: SiDiscord, label: "Discord" },
   ];
 
   return (
@@ -177,19 +185,19 @@ export default function ContactSection() {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground py-4 rounded-lg text-lg font-semibold hover:scale-105 transition-all duration-300 shimmer-overlay animate-glow-pulse disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground py-4 rounded-lg text-lg font-semibold hover:scale-105 transition-all duration-300 shimmer-overlay animate-glow-pulse disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   data-testid="contact-submit-button"
                 >
                   {isSubmitting ? (
                     <>
-                      <i className="fas fa-spinner fa-spin mr-2"></i>
+                      <Loader2 className="w-5 h-5 animate-spin" />
                       TRANSMITTING...
                     </>
                   ) : (
                     <>
-                      <i className="fas fa-rocket mr-2"></i>
+                      <Rocket className="w-5 h-5" />
                       TRANSMIT TO THE VOID
                     </>
                   )}
@@ -213,8 +221,8 @@ export default function ContactSection() {
                 whileHover={{ scale: 1.05 }}
                 data-testid={`contact-method-${index}`}
               >
-                <div className={`w-12 h-12 bg-gradient-to-br ${method.gradient} rounded-full mx-auto mb-4 flex items-center justify-center text-xl animate-glow`}>
-                  <i className={`${method.icon} text-white`}></i>
+                <div className={`w-12 h-12 bg-gradient-to-br ${method.gradient} rounded-full mx-auto mb-4 flex items-center justify-center animate-glow`}>
+                  <method.icon className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-serif font-bold text-accent mb-2">{method.title}</h4>
                 <p className="text-sm text-muted-foreground">{method.value}</p>
@@ -231,7 +239,7 @@ export default function ContactSection() {
             viewport={{ once: true }}
           >
             <p className="text-accent font-medium" data-testid="response-time">
-              ⚡ Usually responds within 24 hours
+              Usually responds within 24 hours
             </p>
           </motion.div>
         </div>
@@ -255,7 +263,7 @@ export default function ContactSection() {
             </div>
 
             <div className="flex justify-center space-x-6 mb-8">
-              {["fab fa-twitter", "fab fa-instagram", "fab fa-discord", "fab fa-opensea"].map((icon, index) => (
+              {socialLinks.map((social, index) => (
                 <motion.a
                   key={index}
                   href="#"
@@ -264,7 +272,7 @@ export default function ContactSection() {
                   whileTap={{ scale: 0.9 }}
                   data-testid={`footer-social-${index}`}
                 >
-                  <i className={icon}></i>
+                  <social.icon className="w-5 h-5" />
                 </motion.a>
               ))}
             </div>

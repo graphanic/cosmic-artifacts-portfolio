@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { Send, ArrowRight, X } from "lucide-react";
 
 interface JournalEntry {
   id: string;
@@ -13,6 +16,9 @@ interface JournalEntry {
 
 export default function JournalSection() {
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const { toast } = useToast();
 
   const journalEntries: JournalEntry[] = [
     {
@@ -43,6 +49,37 @@ export default function JournalSection() {
       readTime: "4 min read",
     },
   ];
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    setIsSubscribing(true);
+    try {
+      await apiRequest("POST", "/api/newsletter/subscribe", { email });
+      toast({
+        title: "Quantum Link Established",
+        description: "You've been connected to the cosmic network. Expect transmissions soon.",
+      });
+      setEmail("");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      if (message.includes("409")) {
+        toast({
+          title: "Already Connected",
+          description: "This quantum address is already linked to our network.",
+        });
+      } else {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to establish quantum link. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <section id="journal" className="py-32 parallax-element">
@@ -102,7 +139,7 @@ export default function JournalSection() {
                     whileHover={{ x: 5 }}
                   >
                     <span>Read More</span>
-                    <i className="fas fa-arrow-right"></i>
+                    <ArrowRight className="w-4 h-4" />
                   </motion.button>
                 </div>
               </div>
@@ -125,22 +162,35 @@ export default function JournalSection() {
             <p className="text-muted-foreground text-sm mb-6">
               Get notified when new digital universes are born
             </p>
-            <div className="flex space-x-2">
+            <form onSubmit={handleNewsletterSubmit} className="flex space-x-2">
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
+                required
                 className="flex-1 bg-input border border-border rounded-lg px-4 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                 data-testid="newsletter-email-input"
               />
               <motion.button
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+                type="submit"
+                disabled={isSubscribing}
+                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 data-testid="newsletter-submit"
               >
-                <i className="fas fa-paper-plane"></i>
+                {isSubscribing ? (
+                  <motion.div
+                    className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
               </motion.button>
-            </div>
+            </form>
           </div>
         </motion.div>
 
@@ -160,7 +210,7 @@ export default function JournalSection() {
                 onClick={() => setSelectedEntry(null)}
                 data-testid="journal-modal-close"
               >
-                <i className="fas fa-times"></i>
+                <X className="w-6 h-6" />
               </button>
               <div className="bg-card/90 backdrop-blur-sm rounded-xl p-8 border border-border">
                 {(() => {

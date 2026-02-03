@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { X } from "lucide-react";
 
 interface Artwork {
   id: string;
@@ -7,10 +8,12 @@ interface Artwork {
   title: string;
   category: string;
   year: string;
+  medium: string;
 }
 
 export default function GallerySection() {
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const artworks: Artwork[] = [
     {
@@ -19,6 +22,7 @@ export default function GallerySection() {
       title: "Stellar Genesis",
       category: "Digital Sculpture",
       year: "2024",
+      medium: "3D Render",
     },
     {
       id: "2",
@@ -26,6 +30,7 @@ export default function GallerySection() {
       title: "Quantum Threads",
       category: "Interactive Installation",
       year: "2024",
+      medium: "Generative",
     },
     {
       id: "3",
@@ -33,6 +38,7 @@ export default function GallerySection() {
       title: "Celestial Fragments",
       category: "Digital Painting",
       year: "2024",
+      medium: "Digital Painting",
     },
     {
       id: "4",
@@ -40,6 +46,7 @@ export default function GallerySection() {
       title: "Aurora Fields",
       category: "Generative Art",
       year: "2024",
+      medium: "Generative",
     },
     {
       id: "5",
@@ -47,6 +54,7 @@ export default function GallerySection() {
       title: "Neon Metropolis",
       category: "3D Render",
       year: "2024",
+      medium: "3D Render",
     },
     {
       id: "6",
@@ -54,8 +62,15 @@ export default function GallerySection() {
       title: "Sacred Geometry",
       category: "Mathematical Art",
       year: "2024",
+      medium: "Generative",
     },
   ];
+
+  const filters = ["all", "3D Render", "Digital Painting", "Generative"];
+
+  const filteredArtworks = activeFilter === "all" 
+    ? artworks 
+    : artworks.filter(a => a.medium === activeFilter);
 
   const openLightbox = (artwork: Artwork) => {
     setSelectedArtwork(artwork);
@@ -85,9 +100,35 @@ export default function GallerySection() {
           </p>
         </motion.div>
 
+        {/* Filter buttons */}
+        <motion.div 
+          className="flex justify-center gap-4 mb-12 flex-wrap"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          {filters.map((filter) => (
+            <motion.button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                activeFilter === filter
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              data-testid={`filter-${filter}`}
+            >
+              {filter === "all" ? "All Works" : filter}
+            </motion.button>
+          ))}
+        </motion.div>
+
         {/* Cinematic dark theme gallery grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {artworks.map((artwork, index) => (
+          {filteredArtworks.map((artwork, index) => (
             <motion.div
               key={artwork.id}
               className="group relative overflow-hidden rounded-xl fractal-border cursor-pointer"
@@ -97,6 +138,7 @@ export default function GallerySection() {
               viewport={{ once: true }}
               whileHover={{ scale: 1.02 }}
               onClick={() => openLightbox(artwork)}
+              layout
               data-testid={`artwork-${artwork.id}`}
             >
               <img
@@ -108,6 +150,9 @@ export default function GallerySection() {
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-xl font-serif font-bold text-accent mb-2">{artwork.title}</h3>
                   <p className="text-sm text-muted-foreground">{artwork.category}, {artwork.year}</p>
+                  <span className="inline-block mt-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+                    {artwork.medium}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -126,11 +171,11 @@ export default function GallerySection() {
           >
             <div className="relative max-w-4xl max-h-[90vh]">
               <button
-                className="absolute -top-12 right-0 text-foreground hover:text-accent text-2xl z-10"
+                className="absolute -top-12 right-0 text-foreground hover:text-accent z-10"
                 onClick={closeLightbox}
                 data-testid="lightbox-close"
               >
-                <i className="fas fa-times"></i>
+                <X className="w-8 h-8" />
               </button>
               <motion.img
                 src={selectedArtwork.src}
@@ -144,6 +189,9 @@ export default function GallerySection() {
               <div className="absolute bottom-4 left-4 right-4 bg-card/80 backdrop-blur-sm rounded-lg p-4">
                 <h3 className="text-xl font-serif font-bold text-accent mb-1">{selectedArtwork.title}</h3>
                 <p className="text-muted-foreground">{selectedArtwork.category}, {selectedArtwork.year}</p>
+                <span className="inline-block mt-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+                  {selectedArtwork.medium}
+                </span>
               </div>
             </div>
           </motion.div>

@@ -1,25 +1,31 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { ShoppingCart, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: string;
   title: string;
   description: string;
   price: string;
+  priceNumeric: number;
   image: string;
   badge: string;
   badgeColor: string;
+  shopifyHandle?: string;
 }
 
 export default function ShopSection() {
   const [cart, setCart] = useState<string[]>([]);
+  const { toast } = useToast();
 
   const products: Product[] = [
     {
       id: "1",
       title: "Stellar Genesis #001",
       description: "Original digital masterpiece capturing the birth of cosmic entities through algorithmic synthesis.",
-      price: "2.5 ETH",
+      price: "$250",
+      priceNumeric: 250,
       image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "LIMITED",
       badgeColor: "accent",
@@ -28,7 +34,8 @@ export default function ShopSection() {
       id: "2",
       title: "Quantum Threads #007",
       description: "Interactive installation exploring the intersection of mathematics and visual poetry.",
-      price: "1.8 ETH",
+      price: "$180",
+      priceNumeric: 180,
       image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "RARE",
       badgeColor: "secondary",
@@ -37,7 +44,8 @@ export default function ShopSection() {
       id: "3",
       title: "Sacred Geometry #003",
       description: "Mathematical art piece revealing the hidden patterns that govern cosmic harmony.",
-      price: "3.2 ETH",
+      price: "$320",
+      priceNumeric: 320,
       image: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "GENESIS",
       badgeColor: "primary",
@@ -46,7 +54,8 @@ export default function ShopSection() {
       id: "4",
       title: "Aurora Fields #012",
       description: "Generative art piece with endless variations of ethereal energy patterns.",
-      price: "4.1 ETH",
+      price: "$410",
+      priceNumeric: 410,
       image: "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "ANIMATED",
       badgeColor: "accent",
@@ -55,7 +64,8 @@ export default function ShopSection() {
       id: "5",
       title: "Neon Metropolis #005",
       description: "Futuristic cityscape rendered in hyperreal detail with dynamic lighting systems.",
-      price: "2.9 ETH",
+      price: "$290",
+      priceNumeric: 290,
       image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "EXCLUSIVE",
       badgeColor: "secondary",
@@ -64,17 +74,20 @@ export default function ShopSection() {
       id: "6",
       title: "Celestial Fragments #001",
       description: "Unique crystalline structures formed through computational alchemy and digital precision.",
-      price: "5.7 ETH",
+      price: "$570",
+      priceNumeric: 570,
       image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600",
       badge: "1/1",
       badgeColor: "primary",
     },
   ];
 
-  const addToCart = (productId: string) => {
-    setCart(prev => [...prev, productId]);
-    // Here you would integrate with Shopify Buy SDK
-    console.log(`Added product ${productId} to cart`);
+  const addToCart = (product: Product) => {
+    setCart(prev => [...prev, product.id]);
+    toast({
+      title: "Artifact Added",
+      description: `${product.title} has been added to your collection.`,
+    });
   };
 
   const getBadgeStyles = (color: string) => {
@@ -110,6 +123,11 @@ export default function ShopSection() {
     return gradients[index % gradients.length];
   };
 
+  const totalPrice = cart.reduce((sum, id) => {
+    const product = products.find(p => p.id === id);
+    return sum + (product?.priceNumeric || 0);
+  }, 0);
+
   return (
     <section id="shop" className="py-32 parallax-element">
       <div className="container mx-auto px-6">
@@ -124,7 +142,10 @@ export default function ShopSection() {
             ARTIFACT VAULT
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto" data-testid="shop-description">
-            Acquire pieces of the cosmic collection - each artwork comes with blockchain verification and eternal digital ownership
+            Acquire pieces of the cosmic collection - digital art prints and assets available for purchase
+          </p>
+          <p className="text-sm text-accent mt-4">
+            Shopify integration ready - connect your store to enable checkout
           </p>
         </motion.div>
 
@@ -157,15 +178,16 @@ export default function ShopSection() {
                 <p className="text-muted-foreground text-sm mb-4">{product.description}</p>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-2xl font-bold text-foreground">{product.price}</span>
-                  <span className="text-sm text-muted-foreground">+ gas fees</span>
+                  <span className="text-sm text-muted-foreground">Digital Download</span>
                 </div>
                 <motion.button
-                  className={`w-full bg-gradient-to-r ${getButtonGradient(index)} text-primary-foreground py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 animate-glow`}
+                  className={`w-full bg-gradient-to-r ${getButtonGradient(index)} text-primary-foreground py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 animate-glow flex items-center justify-center gap-2`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => addToCart(product.id)}
+                  onClick={() => addToCart(product)}
                   data-testid={`add-to-cart-${product.id}`}
                 >
+                  <ShoppingCart className="w-5 h-5" />
                   ACQUIRE ARTIFACT
                 </motion.button>
               </div>
@@ -176,13 +198,26 @@ export default function ShopSection() {
         {/* Cart indicator */}
         {cart.length > 0 && (
           <motion.div
-            className="fixed bottom-8 right-8 bg-accent text-accent-foreground rounded-full w-16 h-16 flex items-center justify-center text-lg font-bold animate-glow-pulse z-40"
+            className="fixed bottom-8 right-8 z-40"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            data-testid="cart-indicator"
           >
-            {cart.length}
+            <motion.button
+              className="bg-accent text-accent-foreground rounded-full px-6 py-4 flex items-center gap-3 animate-glow-pulse shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => toast({
+                title: "Checkout Ready",
+                description: "Connect your Shopify store to enable checkout functionality.",
+              })}
+              data-testid="cart-indicator"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              <span className="font-bold">{cart.length} items</span>
+              <span className="border-l border-accent-foreground/30 pl-3">${totalPrice}</span>
+              <ExternalLink className="w-4 h-4" />
+            </motion.button>
           </motion.div>
         )}
       </div>

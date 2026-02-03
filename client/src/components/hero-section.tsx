@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 export default function HeroSection() {
   const artworkImages = [
@@ -72,7 +73,7 @@ export default function HeroSection() {
         </motion.div>
 
         <motion.button
-          className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-12 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-all duration-300 shimmer-overlay animate-glow-pulse"
+          className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-12 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-all duration-300 shimmer-overlay animate-glow-pulse inline-flex items-center gap-2"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
@@ -81,6 +82,7 @@ export default function HeroSection() {
           onClick={() => document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth" })}
           data-testid="hero-cta-button"
         >
+          <Sparkles className="w-5 h-5" />
           ENTER THE VOID
         </motion.button>
       </div>
