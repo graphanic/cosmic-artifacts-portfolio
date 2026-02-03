@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, ExternalLink } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface Artwork {
   id: string;
@@ -14,6 +15,7 @@ interface Artwork {
 export default function GallerySection() {
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [, setLocation] = useLocation();
 
   const artworks: Artwork[] = [
     {
@@ -187,11 +189,28 @@ export default function GallerySection() {
                 onClick={(e) => e.stopPropagation()}
               />
               <div className="absolute bottom-4 left-4 right-4 bg-card/80 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-serif font-bold text-accent mb-1">{selectedArtwork.title}</h3>
-                <p className="text-muted-foreground">{selectedArtwork.category}, {selectedArtwork.year}</p>
-                <span className="inline-block mt-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
-                  {selectedArtwork.medium}
-                </span>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-serif font-bold text-accent mb-1">{selectedArtwork.title}</h3>
+                    <p className="text-muted-foreground">{selectedArtwork.category}, {selectedArtwork.year}</p>
+                    <span className="inline-block mt-2 text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+                      {selectedArtwork.medium}
+                    </span>
+                  </div>
+                  <motion.button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      closeLightbox();
+                      setLocation(`/artwork/${selectedArtwork.id}`);
+                    }}
+                    className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View Details
+                    <ExternalLink className="w-4 h-4" />
+                  </motion.button>
+                </div>
               </div>
             </div>
           </motion.div>

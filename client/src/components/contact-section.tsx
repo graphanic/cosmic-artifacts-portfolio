@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Rocket, Mail, Loader2 } from "lucide-react";
-import { SiTwitter, SiDiscord, SiInstagram } from "react-icons/si";
+import { SiX, SiDiscord, SiInstagram } from "react-icons/si";
 
 interface ContactForm {
   name: string;
@@ -58,7 +58,7 @@ export default function ContactSection() {
     },
     {
       title: "Cosmic Stream",
-      icon: SiTwitter,
+      icon: SiX,
       value: "@CosmicArtifacts",
       gradient: "from-secondary to-accent",
     },
@@ -71,7 +71,7 @@ export default function ContactSection() {
   ];
 
   const socialLinks = [
-    { icon: SiTwitter, label: "Twitter" },
+    { icon: SiX, label: "X" },
     { icon: SiInstagram, label: "Instagram" },
     { icon: SiDiscord, label: "Discord" },
   ];
