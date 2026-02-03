@@ -67,6 +67,14 @@ shared/
 - 2024: Added video categorization and filtering
 - 2024: Implemented artwork filtering by medium
 
+## Accessibility Features
+- **Reduced Motion Support**: `@media (prefers-reduced-motion: reduce)` automatically disables all non-essential animations including particles, glitch effects, floating whispers, scan lines, and gradient shifting while preserving static glows and colors
+- **Focus Styles**: Visible neon glow focus indicators for all interactive elements (buttons, links, inputs) matching the site aesthetic
+- **Screen Reader Support**: `.sr-only` utility class for visually hidden but screen reader accessible text
+- **Skip Link Styling**: Pre-styled `.skip-link` class for keyboard navigation skip links
+- **ARIA Attributes**: Decorative elements (cursor effects, particles, floating whispers, geometric shapes) have `aria-hidden="true"`
+- **Storm Mode Toggle**: Manual control to reduce visual chaos in addition to automatic system preference detection
+
 ## Development Notes
 - Shop section is Shopify-ready but requires Shopify Buy SDK for live checkout
 - Newsletter and contact use in-memory storage (upgrade to DB if needed)
