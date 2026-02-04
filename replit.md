@@ -75,8 +75,14 @@ shared/
 - **ARIA Attributes**: Decorative elements (cursor effects, particles, floating whispers, geometric shapes) have `aria-hidden="true"`
 - **Storm Mode Toggle**: Manual control to reduce visual chaos in addition to automatic system preference detection
 
+## GitHub Repository
+- **Repository**: https://github.com/graphanic/cosmic-artifacts-portfolio
+- **Integration**: Connected via Replit GitHub connector
+- **Local Dev Guide**: See `LOCAL_DEVELOPMENT.md` for setup instructions
+
 ## Development Notes
 - Shop section is Shopify-ready but requires Shopify Buy SDK for live checkout
 - Newsletter and contact use in-memory storage (upgrade to DB if needed)
 - All animations use Framer Motion for smooth performance
 - CSS uses custom properties for theming consistency
+- GitHub integration uses `@octokit/rest` via `server/github.ts`
